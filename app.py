@@ -1,16 +1,15 @@
-from flask import Flask, escape, request, Response
+from flask import Flask, request
 from translate_photo import translate_photo
 
 app = Flask(__name__)
 
-@app.route('/')
+# Imaginea trebuie trimisa ca raw bytes
+@app.route('/', methods=['POST'])
 def main():
-    #face decode automat din url encoding
-    encoded_image = request.args.get("image")
+    #Trebuie facuta o verificare, daca nu e nimic in request o sa dea 500
+    image_bytes = request.stream.read()
     language = request.args.get("language")
     if language is None:
         language = 'en'
-    return translate_photo(encoded_image, language)
-    #return Response(translate_photo(encoded_image, language), mimetype='image/jpeg')
-
+    return translate_photo(image_bytes, language)
 
